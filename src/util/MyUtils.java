@@ -39,7 +39,7 @@ public class MyUtils {
     }
 
     /**
-     * 修改的时候设置值
+     * 通过另一个类对当前类赋值
      *
      * @param className 实体类对象名
      * @param a         最终需要更新的对象
@@ -57,7 +57,7 @@ public class MyUtils {
     }
 
     /**
-     * 修改的时候设置值(包括父类)
+     * 通过另一个类对当前类赋值(包括父类)
      *
      * @param className 实体类对象名
      * @param a         最终需要更新的对象
