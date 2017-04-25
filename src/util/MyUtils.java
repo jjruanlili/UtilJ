@@ -59,7 +59,7 @@ public class MyUtils {
             Class<?> clazz = Class.forName(className);
             setSelfAttribute(clazz, a, b);
         } catch (Exception e) {
-            System.out.println("找不到此类");
+            System.out.println("找不到此类"+className);
             return false;
         }
         return true;
@@ -145,7 +145,6 @@ public class MyUtils {
                     continue;
                 }
             } catch (Exception e) {
-                //                e.printStackTrace();
                 continue;
             }
         }
@@ -153,16 +152,16 @@ public class MyUtils {
 
     /**
      * 根据变量名称从params.properties文中获取对应的值
-     * 注意编码为utf-8
+     * @param profileName 文件名
      * @param propertyName 变量名称
      * @return 相应的值 不匹配返回""
      */
-    public static String getParamsProperty(String propertyName) {
-        if (isEmpty(propertyName)) {
+    public static String getParamsProperty(String profileName,String propertyName) {
+        if (isEmpty(profileName) || isEmpty(propertyName)) {
             return "";
         }
         String re = "";
-        InputStream is = MyUtils.class.getClassLoader().getResourceAsStream("params.properties");
+        InputStream is = MyUtils.class.getClassLoader().getResourceAsStream(profileName);
         Properties p = new Properties();
         try {
             p.load(is);
