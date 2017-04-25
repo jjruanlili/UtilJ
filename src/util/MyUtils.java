@@ -1,9 +1,11 @@
 package util;
 
+import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Properties;
 
 /**
  * Created by rll on 2017/4/22.
@@ -16,24 +18,31 @@ public class MyUtils {
      * @return
      */
     public static boolean isEmpty(String input) {
-        if (null == input || "".equals(input))
+        if (null == input || "".equals(input)) {
             return true;
+        }
         return false;
     }
 
     /**
-     * 增加天数
+     * 时间变化
      *
      * @param date 时间基数
-     * @param days 增加天数
+     * @param days 改变时间 +加 -减
      * @param type 0 天数
      * @return
      */
-    public static Date addDays(Date date, int days, int type) {
+    public static Date changeTime(Date date, int days, int type) {
         Calendar calendar = Calendar.getInstance();
-        calendar.setTime(date);
+        //设置时间
+        if (null == date) {
+            calendar.setTime(new Date());
+        } else {
+            calendar.setTime(date);
+        }
+        //改变时间
         if (type == 0) {
-            calendar.set(Calendar.DAY_OF_MONTH, days);
+            calendar.add(Calendar.DAY_OF_MONTH, days);
         }
         return calendar.getTime();
     }
@@ -48,7 +57,7 @@ public class MyUtils {
     public static boolean editSetAttribute(String className, Object a, Object b) {
         try {
             Class<?> clazz = Class.forName(className);
-            setSelfAttribute(clazz,a,b);
+            setSelfAttribute(clazz, a, b);
         } catch (Exception e) {
             System.out.println("找不到此类");
             return false;
@@ -66,12 +75,12 @@ public class MyUtils {
     public static boolean editSetAttributeWithFather(String className, Object a, Object b) {
         try {
             Class<?> clazz = Class.forName(className);
-            do{
-                setSelfAttribute(clazz,a,b);
+            do {
+                setSelfAttribute(clazz, a, b);
                 clazz = clazz.getSuperclass();
-            }while (null != clazz.getSuperclass());
+            } while (null != clazz.getSuperclass());
         } catch (Exception e) {
-            System.out.println("找不到此类");
+            System.out.println("找不到此类" + className);
             return false;
         }
         return true;
@@ -89,10 +98,10 @@ public class MyUtils {
             try {
                 //属性类型
                 String typeName = tmp_f.getType().toString();
-//                System.out.println(typeName);
+                //                System.out.println(typeName);
                 //组装大写属性名
                 String attributeName = tmp_f.getName().substring(0, 1).toUpperCase() + tmp_f.getName().substring(1);
-//                System.out.println(attributeName);
+                //                System.out.println(attributeName);
                 Method getMethod = b.getClass().getMethod("get" + attributeName);
                 //针对不同类型 进行set赋值
                 if (typeName.lastIndexOf("String") != -1 && null != getMethod.invoke(b)) {
@@ -136,9 +145,31 @@ public class MyUtils {
                     continue;
                 }
             } catch (Exception e) {
-//                e.printStackTrace();
+                //                e.printStackTrace();
                 continue;
             }
         }
+    }
+
+    /**
+     * 根据变量名称从params.properties文中获取对应的值
+     * 注意编码为utf-8
+     * @param propertyName 变量名称
+     * @return 相应的值 不匹配返回""
+     */
+    public static String getParamsProperty(String propertyName) {
+        if (isEmpty(propertyName)) {
+            return "";
+        }
+        String re = "";
+        InputStream is = MyUtils.class.getClassLoader().getResourceAsStream("params.properties");
+        Properties p = new Properties();
+        try {
+            p.load(is);
+            re = new String(p.getProperty(propertyName).getBytes("iso8859-1"), "utf-8");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return re;
     }
 }
