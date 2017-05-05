@@ -171,4 +171,28 @@ public class MyUtils {
         }
         return re;
     }
+
+    /**
+     * 获取传入日期的第一天
+     * @param date
+     * @return
+     */
+    public static Date getMonthFirstDay(Date date){
+        Calendar cale = Calendar.getInstance();
+        cale.setTime(date);
+        cale.set(Calendar.DAY_OF_MONTH, 1); //每个月第一天肯定是1号
+        return cale.getTime();
+    }
+
+    /**
+     * 获取传入日期的最后一天
+     * @param date
+     * @return
+     */
+    public static Date getMonthLastDay(Date date){
+        Calendar cale = Calendar.getInstance();
+        cale.setTime(date);
+        cale.set(Calendar.DAY_OF_MONTH, cale.getActualMaximum(Calendar.DAY_OF_MONTH)); //每个月最后一天 为它的最大天数
+        return cale.getTime();
+    }
 }
