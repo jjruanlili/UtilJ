@@ -1,0 +1,31 @@
+-- 删除存储过程
+DROP PROCEDURE IF EXISTS createEatUserMsg;
+-- 新建存储过程
+CREATE PROCEDURE createEatUserMsg(in userId varchar(40),in userName varchar(20),in userPhone varchar(11),in deptName varchar(20),in middleTime varchar(8),out resMsg varchar(10))
+begin
+-- 判断是否已存在
+set @v:= (select count(1) from bu_client_info where fci_fbc_id=userId);
+if @v=0 then
+-- 不存在则开始插入
+-- 插入信息
+insert into bu_client_info(fci_fbc_id,fci_sbi_id,fci_promise_count,fci_adderdate,fci_phone,fci_username,fci_bc_id) 
+  values(userId,1,20,now(),userPhone,userName,1);
+-- 插入部门关系
+set @deptId:= (select bd_id from bu_deptinfo where  bd_name=deptName);
+insert into bu_client_dept(bcd_fbc_id,bcd_bd_id,bcd_flag) values(userId,@deptId,1);
+-- 插入三餐时间
+insert into bu_client_baseset(bcb_type,bcb_effective_date,bcb_invalid_date,bcb_fbc_id,bcb_sbi_id,bcb_bc_id) values(1,'06:00:00','09:00:00',userId,1,1);
+insert into bu_client_baseset(bcb_type,bcb_effective_date,bcb_invalid_date,bcb_fbc_id,bcb_sbi_id,bcb_bc_id) values(2,middleTime,'13:00:00',userId,1,1);
+insert into bu_client_baseset(bcb_type,bcb_effective_date,bcb_invalid_date,bcb_fbc_id,bcb_sbi_id,bcb_bc_id) values(3,'17:25:00','19:00:00',userId,1,1); 
+-- 插入饭卡提醒时间 
+insert into bu_alarm_preorder_setting(baps_fbc_id,baps_sbi_id,baps_flag,baps_loop,baps_push_time)
+ values(userId,1,1,1,'12:30:00');
+set resMsg ="插入成功";
+else
+set resMsg ="已存在";
+end if;
+end;
+
+-- 调用  注意午饭时间
+call createEatUserMsg(288888,'test',188****5652,'市场营销部信息化支撑室','11:45:00',@resMsg);
+select @resMsg;
